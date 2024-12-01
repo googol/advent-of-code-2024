@@ -1,0 +1,6 @@
+dist/
+.gitignore
+.husky/
+.nvmrc
+.pino-prettyrc
+.prettierignore

@@ -42,15 +42,13 @@ export function* zipIterable<Tleft, Tright>(
   const leftIterator = left[Symbol.iterator]();
   const rightIterator = right[Symbol.iterator]();
 
-  while (true) {
-    const leftResult = leftIterator.next();
-    const rightResult = rightIterator.next();
-
-    if (leftResult.done || rightResult.done) {
-      return;
-    }
-
+  let leftResult = leftIterator.next();
+  let rightResult = rightIterator.next();
+  while (!leftResult.done && !rightResult.done) {
     yield [leftResult.value, rightResult.value];
+
+    leftResult = leftIterator.next();
+    rightResult = rightIterator.next();
   }
 }
 
@@ -189,12 +187,13 @@ export function iterate<T>(input: Iterable<T>): IterableWrapper<T> {
 export function* range(options?: {
   start?: number;
   step?: number;
+  max?: number | undefined;
 }): Iterable<number> {
-  const { start = 0, step = 1 } = options ?? {};
+  const { start = 0, step = 1, max } = options ?? {};
 
   let current = start;
 
-  while (true) {
+  while (max === undefined || current > max) {
     yield current;
 
     current += step;
